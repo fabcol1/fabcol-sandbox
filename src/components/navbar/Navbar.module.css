@@ -1,0 +1,32 @@
+.borderBottom {
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.05);
+}
+
+.fontSmall {
+  font-size: 13px;
+}
+
+.noBootstrapEffects {
+  display: inline-block;
+}
+.noBootstrapEffects:hover, .noBootstrapEffects:active  {
+  background: none !important;
+  background-color: none !important;
+}
+
+.linkBtnSuccess,
+.linkBtnSuccess:hover {
+  text-decoration: none;
+  color: #28a745 !important;
+}
+
+.linkBtnDark,
+.linkBtnDark:hover {
+  text-decoration: none;
+  color: black !important;
+}
+
+
+/* a.text-success:hover, a.text-success:focus {
+  color: #28a745 !important;
+} */
