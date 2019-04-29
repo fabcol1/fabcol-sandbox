@@ -1,75 +1,94 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-
 import { Spring } from 'react-spring/renderprops';
-
 import styles from './Navbar.module.css';
+
+import FixedTopProgressBarSprinAnim from '../react-spring-anim/FixedTopProgressBarSprinAnim';
 
 class Navbar extends Component {
   constructor() {
     super();
     this.state = {
-      opacity: 1,
-      number: 0,
-      resetAnimation: false,
+      noAnim: true,
     };
-    this.resetAnimation = this.resetAnimation.bind(this);
-    this.animationEnd = this.animationEnd.bind(this);
+    this.scrollEvent = this.scrollEvent.bind(this);
   }
 
-  resetAnimation(e) {
-    this.setState({
-      ...this.state,
-      resetAnimation: true,
-      opacity: 1,
-    });
+  componentDidMount() {
+    window.addEventListener('scroll', this.scrollEvent);
   }
-  animationEnd(e) {
+
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.scrollEvent);
+  }
+
+  scrollEvent(e) {
+    let noAnim = !(this.divRef.clientHeight - window.scrollY < -100);
+    if (window.scrollY === 0) noAnim = true;
     this.setState({
       ...this.state,
-      opacity: 0,
+      noAnim,
     });
+    console.log(noAnim);
   }
 
   render() {
     const { isMobileBrowser } = this.props.clientInfo;
-    return (
-      <div>
-        <div className="fixed-top" style={{ zIndex: '2000' }}>
-          <Spring
-            from={{ number: this.state.number, opacity: this.state.opacity }}
-            to={{ number: 100, opacity: 1 }}
-            config={{ tension: 200, friction: 180 }}
-            onRest={this.animationEnd}
-            reset={this.state.resetAnimation}>
-            {props => (
+    const { noAnim } = this.state;
+
+    const divAnimated = (
+      <div style={{ position: 'fixed', width: '100%', top: 0 }}>
+        <Spring
+          from={{ opacity: 0, marginTop: '-100px' }}
+          to={{ opacity: 1, marginTop: '0' }}
+          config={{ duration: 800 }}>
+          {props => (
+            <div style={props}>
               <div
-                style={{
-                  width: props.number + '%',
-                  backgroundColor: 'yellow',
-                  height: isMobileBrowser ? '5px' : '5px',
-                  opacity: this.state.opacity,
-                }}
-              />
-            )}
-          </Spring>
-        </div>
-        <nav
-          className={[
-            'navbar navbar-expand-lg bg-white fixed-top',
-            styles.borderBottom,
-          ].join(' ')}>
-          <div className="container">
-            <Link
-              to="/"
-              className={['navbar-brand', styles.empty].join(' ')}
-              onClick={this.resetAnimation}>
-              <img alt="logo" height="30" width="30" src="./favicon.ico" />
-            </Link>
-          </div>
-        </nav>
+                // className="fixed-top"
+                style={{ height: '100px', background: 'blue' }}>
+                Anim
+              </div>
+            </div>
+          )}
+        </Spring>
       </div>
+    );
+    console.log(divAnimated);
+    return (
+      <React.Fragment>
+        <div ref={element => (this.divRef = element)}>
+          {noAnim ? (
+            <div class="bg-light" style={{ height: '100px' }}>
+              No Anim
+            </div>
+          ) : (
+            divAnimated
+          )}
+        </div>
+      </React.Fragment>
+
+      // <Spring
+      //   from={{ opacity, marginTop: clientHeight }}
+      //   to={{ opacity: 1, marginTop: clientHeight * 2 }}
+      //   config={{ duration: 1000 }}
+      //   reset={{ resetAnimation }}>
+      //   {props => (
+      //     <div ref={element => (this.divRef = element)} style={props}>
+      //       <nav className={classArray.join(' ')}>
+      //         <div className="container">
+      //           <Link
+      //             to="/"
+      //             className={['navbar-brand', styles.empty].join(' ')}
+      //             onClick={this.resetAnimation}>
+      //             <img alt="logo" height="30" width="30" src="./favicon.ico" />
+      //           </Link>
+      //         </div>
+      //       </nav>
+      //     </div>
+      //   )}
+      // </Spring>
     );
   }
 }
@@ -84,3 +103,99 @@ export default connect(
   mapStateToProps,
   {},
 )(Navbar);
+
+// import React, { Component } from 'react';
+// import { Link } from 'react-router-dom';
+// import { connect } from 'react-redux';
+// import { Spring } from 'react-spring/renderprops';
+// import styles from './Navbar.module.css';
+
+// import FixedTopProgressBarSprinAnim from '../react-spring-anim/FixedTopProgressBarSprinAnim';
+
+// class Navbar extends Component {
+//   constructor() {
+//     super();
+//     this.state = {
+//       opacity: 1,
+//       classArray: ['navbar navbar-expand-lg bg-white', styles.borderBottom],
+//       resetAnimation: true,
+//       canToggleAnim: true,
+//       clientHeight: this.divRef !== undefined ? this.divRef.clientHeight : 0,
+//     };
+//     this.scrollEvent = this.scrollEvent.bind(this);
+//   }
+
+//   componentDidMount() {
+//     window.addEventListener('scroll', this.scrollEvent);
+//   }
+
+//   componentWillUnmount() {
+//     window.removeEventListener('scroll', this.scrollEvent);
+//   }
+
+//   scrollEvent(e) {
+//     if (
+//       window.scrollY !== 0 &&
+//       this.divRef.clientHeight - window.scrollY < -100 &&
+//       this.state.canToggleAnim
+//     ) {
+//       this.setState({
+//         ...this.state,
+//         classArray: ['navbar navbar-expand-lg bg-primary', styles.borderBottom],
+//         opacity: 0,
+//         resetAnimation: true,
+//         canToggleAnim: false,
+//         clientHeight: this.divRef.clientHeight,
+//       });
+//     }
+//     if (window.scrollY === 0) {
+//       this.setState({
+//         ...this.state,
+//         opacity: 1,
+//         classArray: ['navbar navbar-expand-lg bg-white', styles.borderBottom],
+//         resetAnimation: false,
+//         canToggleAnim: true,
+//         clientHeight: 0,
+//       });
+//     }
+//   }
+
+//   render() {
+//     const { isMobileBrowser } = this.props.clientInfo;
+//     const { opacity, classArray, resetAnimation, clientHeight } = this.state;
+//     console.log(clientHeight);
+//     return (
+//       <Spring
+//         from={{ opacity, marginTop: clientHeight }}
+//         to={{ opacity: 1, marginTop: clientHeight * 2 }}
+//         config={{ duration: 1000 }}
+//         reset={{ resetAnimation }}>
+//         {props => (
+//           <div ref={element => (this.divRef = element)} style={props}>
+//             <nav className={classArray.join(' ')}>
+//               <div className="container">
+//                 <Link
+//                   to="/"
+//                   className={['navbar-brand', styles.empty].join(' ')}
+//                   onClick={this.resetAnimation}>
+//                   <img alt="logo" height="30" width="30" src="./favicon.ico" />
+//                 </Link>
+//               </div>
+//             </nav>
+//           </div>
+//         )}
+//       </Spring>
+//     );
+//   }
+// }
+
+// Navbar.propTypes = {};
+
+// const mapStateToProps = state => ({
+//   clientInfo: state.clientInfo,
+// });
+
+// export default connect(
+//   mapStateToProps,
+//   {},
+// )(Navbar);

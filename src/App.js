@@ -8,6 +8,7 @@ import store from './store';
 import Navbar from './components/navbar/Navbar';
 
 import NotFound from './pages/not-found/NotFound';
+import Scrollable from './pages/scrollable/Scrollable';
 
 class App extends Component {
   render() {
@@ -16,11 +17,11 @@ class App extends Component {
         <Router>
           <div>
             <Navbar />
-            <div className="container">
-              <Switch>
-                <Route component={NotFound} />
-              </Switch>
-            </div>
+
+            <Switch>
+              <Route exact path="/" component={Scrollable} />
+              <Route component={NotFound} />
+            </Switch>
           </div>
         </Router>
       </Provider>
