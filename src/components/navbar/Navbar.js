@@ -60,7 +60,7 @@ class Navbar extends Component {
       <React.Fragment>
         <div ref={element => (this.divRef = element)}>
           {noAnim ? (
-            <div class="bg-light" style={{ height: '100px' }}>
+            <div className="bg-light" style={{ height: '100px' }}>
               No Anim
             </div>
           ) : (
