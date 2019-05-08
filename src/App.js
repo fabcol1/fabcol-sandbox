@@ -9,7 +9,6 @@ import Navbar from './components/navbar/Navbar';
 
 import NotFound from './pages/not-found/NotFound';
 import Scrollable from './pages/scrollable/Scrollable';
-import MouseTrailNy from './components/mouse-trail-ny/MouseTrailNy';
 
 class App extends Component {
   render() {
@@ -17,8 +16,7 @@ class App extends Component {
       <Provider store={store}>
         <Router>
           <div>
-            <MouseTrailNy />
-            <Navbar />
+            {/* <Navbar /> */}
 
             <Switch>
               <Route exact path="/" component={Scrollable} />

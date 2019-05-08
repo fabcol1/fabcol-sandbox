@@ -37,22 +37,17 @@ class Point {
   }
 }
 
-class MouseTrailNy extends React.Component {
+class MouseTrailLine extends React.Component {
   constructor() {
     super();
     this.state = {
       cHeight: 0,
       cWidth: 0,
+      scrollHeight: 0,
     };
     this.canvas = React.createRef();
     this.resizeEventHandler = this.resizeEventHandler.bind(this);
-  }
-
-  resizeEventHandler() {
-    this.setState({
-      cHeight: document.body.clientHeight,
-      cWidth: document.body.clientWidth,
-    });
+    this.scrollEventHandler = this.scrollEventHandler.bind(this);
   }
 
   componentDidMount = () => {
@@ -63,6 +58,7 @@ class MouseTrailNy extends React.Component {
     });
 
     window.addEventListener('resize', this.resizeEventHandler, false);
+    window.addEventListener('scroll', this.scrollEventHandler, false);
 
     // If the device supports cursors, start animation.
     if (matchMedia('(pointer:fine)').matches) {
@@ -71,7 +67,25 @@ class MouseTrailNy extends React.Component {
   };
 
   componentWillUnmount() {
+    // probably not necessary:
     window.removeEventListener('resize', this.resizeEventHandler);
+    window.removeEventListener('scroll', this.scrollEventHandler);
+    document.removeEventListener('mousemove', this.mouseMoveEventHandler);
+  }
+
+  resizeEventHandler() {
+    this.setState({
+      ...this.state,
+      cHeight: document.body.clientHeight,
+      cWidth: document.body.clientWidth,
+    });
+  }
+
+  scrollEventHandler(e) {
+    this.setState({
+      ...this.state,
+      scrollHeight: Math.ceil(window.scrollY),
+    });
   }
 
   startAnimation = () => {
@@ -85,13 +99,11 @@ class MouseTrailNy extends React.Component {
       points.push(point);
     };
 
-    document.addEventListener(
-      'mousemove',
-      ({ clientX, clientY }) => {
-        addPoint(clientX - canvas.offsetLeft, clientY - canvas.offsetTop);
-      },
-      false,
-    );
+    const mouseMoveEventHandler = ({ clientX, clientY }) => {
+      addPoint(clientX - canvas.offsetLeft, clientY + this.state.scrollHeight);
+    };
+    this.mouseMoveEventHandler = mouseMoveEventHandler;
+    document.addEventListener('mousemove', mouseMoveEventHandler, false);
 
     const animatePoints = () => {
       ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -131,17 +143,8 @@ class MouseTrailNy extends React.Component {
           ctx.strokeStyle = `rgb(${red},${green},${blue}`;
           ctx.beginPath();
 
-          ctx.arc(
-            midpoint.x,
-            midpoint.y,
-            distance / 2,
-            angle,
-            angle + Math.PI,
-            point.flip,
-          );
-
-          //ctx.moveTo(lastPoint.x, lastPoint.y);
-          // ctx.lineTo(point.x, point.y);
+          ctx.moveTo(lastPoint.x, lastPoint.y);
+          ctx.lineTo(point.x, point.y);
 
           ctx.stroke();
           ctx.closePath();
@@ -155,8 +158,15 @@ class MouseTrailNy extends React.Component {
 
   render = () => {
     const { cHeight, cWidth } = this.state;
-    return <canvas ref={this.canvas} width={cWidth} height={cHeight} />;
+    return (
+      <canvas
+        ref={this.canvas}
+        width={cWidth}
+        height={cHeight}
+        style={{ position: 'absolute', top: 0, left: 0 }}
+      />
+    );
   };
 }
 
-export default MouseTrailNy;
+export default MouseTrailLine;
