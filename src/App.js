@@ -16,7 +16,7 @@ class App extends Component {
       <Provider store={store}>
         <Router>
           <div>
-            {/* <Navbar /> */}
+            <Navbar />
 
             <Switch>
               <Route exact path="/" component={Scrollable} />

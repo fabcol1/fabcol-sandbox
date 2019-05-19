@@ -24,7 +24,7 @@ class Navbar extends Component {
   }
 
   scrollEvent(e) {
-    let noAnim = !(this.divRef.clientHeight - window.scrollY < -100);
+    let noAnim = !(this.divRef.clientHeight - window.scrollY < -80);
     if (window.scrollY === 0) noAnim = true;
     this.setState({
       ...this.state,
@@ -40,14 +40,14 @@ class Navbar extends Component {
     const divAnimated = (
       <div style={{ position: 'fixed', width: '100%', top: 0 }}>
         <Spring
-          from={{ opacity: 0, marginTop: '-100px' }}
+          from={{ opacity: 0, marginTop: '-80px' }}
           to={{ opacity: 1, marginTop: '0' }}
-          config={{ duration: 800 }}>
+          config={{ duration: 200 }}>
           {props => (
             <div style={props}>
               <div
                 // className="fixed-top"
-                style={{ height: '100px', background: 'blue' }}>
+                style={{ height: '80px', background: 'blue' }}>
                 Anim
               </div>
             </div>
@@ -60,7 +60,7 @@ class Navbar extends Component {
       <React.Fragment>
         <div ref={element => (this.divRef = element)}>
           {noAnim ? (
-            <div className="bg-light" style={{ height: '100px' }}>
+            <div className="bg-danger" style={{ height: '80px' }}>
               No Anim
             </div>
           ) : (
